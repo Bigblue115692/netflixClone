@@ -1,0 +1,55 @@
+.movie-modal {
+  --modal-width: 760px;
+}
+
+/* Wide band in the movie's colours, with the poster pinned top-left as in the wireframe. */
+.movie-modal__hero {
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(180px, 30vw, 260px);
+  padding: clamp(20px, 4vw, 36px) clamp(20px, 4vw, 40px) 0;
+  background:
+    linear-gradient(to bottom, transparent 40%, var(--bg-2)),
+    radial-gradient(100% 120% at 0% 0%, hsl(var(--hue) 60% 38% / 0.9), transparent 70%),
+    linear-gradient(120deg, hsl(var(--hue) 40% 18%), hsl(calc(var(--hue) + 30) 45% 8%));
+}
+
+.movie-modal__poster {
+  width: clamp(130px, 26vw, 200px);
+  margin-bottom: -48px;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.6);
+}
+
+.movie-modal__body {
+  padding: 68px clamp(20px, 4vw, 40px) clamp(24px, 4vw, 40px);
+}
+
+.movie-modal__title {
+  margin: 0;
+  font-size: clamp(28px, 4.5vw, 40px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.movie-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.movie-modal__genre {
+  color: var(--text);
+}
+
+.movie-modal__description {
+  max-width: 60ch;
+  margin: 18px 0 28px;
+  font-size: 17px;
+  line-height: 1.6;
+}

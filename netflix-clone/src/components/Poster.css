@@ -31,11 +31,10 @@
 }
 
 .poster__title {
-  font-size: 15cqi;
+  font-size: var(--title-size, 15cqi);
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: -0.03em;
   text-wrap: balance;
-  overflow-wrap: anywhere;
   text-shadow: 0 2px 12px rgb(0 0 0 / 0.5);
 }

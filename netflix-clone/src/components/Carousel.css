@@ -1,0 +1,81 @@
+.carousel {
+  --card-w: clamp(132px, 14vw, 200px);
+  position: relative;
+  margin-inline: calc(var(--gutter) * -1);
+}
+
+.carousel--featured {
+  --card-w: clamp(150px, 16vw, 230px);
+}
+
+.carousel__track {
+  display: flex;
+  gap: clamp(8px, 1vw, 14px);
+  margin: 0;
+  /* Vertical padding leaves room for the hover scale so cards aren't clipped. */
+  padding: 14px var(--gutter) 18px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+
+.carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel__track > li {
+  flex: 0 0 var(--card-w);
+  scroll-snap-align: start;
+}
+
+.carousel__arrow {
+  position: absolute;
+  top: 14px;
+  bottom: 18px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: max(var(--gutter), 44px);
+  padding: 0;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  transition: opacity 200ms ease, background-color 200ms ease;
+}
+
+.carousel__arrow--prev {
+  left: 0;
+  background: linear-gradient(to right, rgb(20 20 20 / 0.95), rgb(20 20 20 / 0.4));
+}
+
+.carousel__arrow--next {
+  right: 0;
+  background: linear-gradient(to left, rgb(20 20 20 / 0.95), rgb(20 20 20 / 0.4));
+}
+
+.carousel__arrow svg {
+  transition: transform 200ms ease;
+}
+
+.carousel__arrow:hover svg {
+  transform: scale(1.25);
+}
+
+.carousel__arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carousel__arrow:focus-visible {
+  outline-offset: -4px;
+}
+
+/* Touch screens swipe; arrows would only cover the cards. */
+@media (hover: none), (max-width: 600px) {
+  .carousel__arrow {
+    display: none;
+  }
+}

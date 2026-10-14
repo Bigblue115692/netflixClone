@@ -1,8 +1,8 @@
 export const GENRES = ['Action', 'Comedy', 'Crime', 'Drama', 'Fantasy', 'Romance', 'Thriller']
 
 export const REGIONS = [
-  { id: 'korean', label: 'Korean dramas', blurb: 'Slow-burn romance, revenge, and ramyeon at midnight.' },
-  { id: 'american', label: 'American dramas', blurb: 'Prestige crime, sitcom comfort, and cliffhangers.' },
+  { id: 'korean', label: 'Korean dramas', singular: 'Korean drama', blurb: 'Slow-burn romance, revenge, and ramyeon at midnight.' },
+  { id: 'american', label: 'American dramas', singular: 'American drama', blurb: 'Prestige crime, sitcom comfort, and cliffhangers.' },
 ]
 
 // `hue` drives the generated poster gradient (no image assets in this app).

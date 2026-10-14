@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useApp } from '../state/appContext'
 import './Navbar.css'
 
 export default function Navbar() {
-  const { profile } = useApp()
+  const { profile, watchlist } = useApp()
+  const { pathname } = useLocation()
   const [scrolled, setScrolled] = useState(false)
+  const onWatchlist = pathname.startsWith('/home/watchlist')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -22,8 +24,20 @@ export default function Navbar() {
       <nav aria-label="Main">
         <ul className="navbar__links">
           <li>
-            <NavLink to="/home" end>
+            {/* Home stays active while a description modal is open over it. */}
+            <Link to="/home" className={onWatchlist ? undefined : 'active'} aria-current={onWatchlist ? undefined : 'page'}>
               Home
+            </Link>
+          </li>
+          <li>
+            <NavLink to="/home/watchlist" state={{ inApp: true }}>
+              Watchlist
+              {watchlist.length > 0 && (
+                <span className="navbar__count">
+                  {watchlist.length}
+                  <span className="visually-hidden"> saved</span>
+                </span>
+              )}
             </NavLink>
           </li>
         </ul>

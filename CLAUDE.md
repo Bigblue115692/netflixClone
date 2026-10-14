@@ -24,9 +24,13 @@ npm run lint      # oxlint (config: .oxlintrc.json; react + oxc plugins)
 
 There is no test runner configured yet.
 
-## Current state
+## Architecture
 
-`src/App.jsx`, `App.css` and `index.css` still contain the Vite starter template. Replace them when you build the real app. `react-router-dom` (v7) is installed but not wired up yet. Entry point: `index.html` → `src/main.jsx` → `App`.
+- **Routing** (`src/App.jsx`, React Router v7 declarative mode via `react-router-dom`): `/` is onboarding. `RequireProfile` guards `/home` and redirects to `/` until a profile exists. `/home/movie/:id` and `/home/watchlist` are child routes of Home: they render through Home's `<Outlet />` as modals, so Home stays mounted behind them.
+- **State** (`src/state/`): a single `useReducer` store in `AppProvider` holds `profile` and `watchlist` (movie ids), read with `useApp()`. Nothing is persisted, and resetting on refresh is a requirement, so don't add localStorage.
+- **Modals** (`components/Modal.jsx`): built on native `<dialog>` + `showModal()`. Focus returns to the element that opened the first modal in a chain. Links that open modals pass `state={{ inApp: true }}`, and `useCloseModal` closes with `navigate(-1)` in that case (so Back and the close button match), otherwise with `navigate('/home')`. Add-to-watchlist *replaces* the description entry with `/home/watchlist`.
+- **Data** (`src/data/`): `movies.js` is static seed data. There are no images: `Poster` draws each poster from the movie's `hue`. `recommendations.js` builds the three Home rows from the profile's region and genres.
+- Each component has a sibling `.css` file. Design tokens are CSS variables in `src/index.css`.
 
 ## Intended app (from `app_outline/`)
 
