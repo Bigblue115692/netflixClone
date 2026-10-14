@@ -1,0 +1,3 @@
+user journey
+
+so the the user will click this and will be prompted to be asked for his age and and genre preference as well as his regional preference. (regional preference can be korean dramas or american dramas) and then he will see the home page in /home within the project root I provided you, they can click on those movie popups with descriptions underneath them and it can popup a movie description page. and they have the option to add it into their personal watch list page. they also have the option within the home page to click and access the personal watch list page as well. 

@@ -1,0 +1,1 @@
+their personal watch list page just shows the list of movies they have currently added, they have the option to either view the descriptions of the movies and whether to delete them off their watch list. 
