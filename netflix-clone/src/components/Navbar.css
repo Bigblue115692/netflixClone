@@ -1,0 +1,84 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+  height: var(--nav-height);
+  padding-inline: var(--gutter);
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.75), transparent);
+  transition: background-color 300ms ease;
+}
+
+.navbar--solid {
+  background-color: var(--bg);
+}
+
+.navbar__logo {
+  color: var(--accent);
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  transform: scaleY(1.15);
+}
+
+.navbar__links {
+  display: flex;
+  gap: clamp(12px, 2vw, 24px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navbar__links a {
+  color: var(--text-2);
+  font-size: 15px;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.navbar__links a:hover {
+  color: var(--text);
+}
+
+.navbar__links a.active {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.navbar__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  min-width: 0;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.navbar__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.navbar__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 16ch;
+}
+
+@media (max-width: 600px) {
+  .navbar__name {
+    display: none;
+  }
+}
