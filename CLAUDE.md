@@ -4,15 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository layout
 
-The repo root holds two things:
+The repo root holds two halves plus shared Claude config:
 
-- `app_outline/`: the product spec. These files are the source of truth for what to build.
-  - `user_journey.md`: the end-to-end flow.
-  - `style_guide.md`: colors, typography and interaction rules.
-  - `pages/<page>/`: one folder per page, each with a `user_story.md` and a wireframe PNG (`home`, `movie_description`, `personal_watch_list`).
-- `netflix-clone/`: the actual app (Vite + React 19, plain JSX, no TypeScript). Run all npm commands from this directory, not from the repo root. The root `package-lock.json` is an empty stub.
+- `front-end/`: the React app (Vite + React 19, plain JSX, no TypeScript), including its product spec.
+  - `front-end/app_outline/`: the spec and source of truth for what to build.
+    - `user_journey.md`: the end-to-end flow.
+    - `style_guide.md`: colors, typography and interaction rules.
+    - `pages/<page>/`: one folder per page, each with a `user_story.md` and a wireframe PNG (`home`, `movie_description`, `personal_watch_list`).
+  - `src/`, `public/`, `index.html`, `package.json`, `vite.config.js`, `.oxlintrc.json`: the app itself.
+- `supabase/`: the database design for the planned back end.
+  - `schema.sql`: the schema.
+  - `erd.png`: the entity-relationship diagram.
+  - `user_stories.md`: database user stories.
+  - `api_notes.md`: API notes (currently empty).
+- `.claude/`: shared `skills/` (supabase, supabase-postgres-best-practices, postgresql-table-design) and `agents/` (front-end-agent).
+- `.mcp.json`: Supabase MCP server config.
 
-## Commands (run in `netflix-clone/`)
+Run all npm commands from `front-end/`, not from the repo root. The front end does not use Supabase yet.
+
+## Commands (run in `front-end/`)
 
 ```bash
 npm install
@@ -24,7 +34,7 @@ npm run lint      # oxlint (config: .oxlintrc.json; react + oxc plugins)
 
 There is no test runner configured yet.
 
-## Architecture
+## Front-end architecture (paths relative to `front-end/`)
 
 - **Routing** (`src/App.jsx`, React Router v7 declarative mode via `react-router-dom`): `/` is onboarding. `RequireProfile` guards `/home` and redirects to `/` until a profile exists. `/home/movie/:id` and `/home/watchlist` are child routes of Home: they render through Home's `<Outlet />` as modals, so Home stays mounted behind them.
 - **State** (`src/state/`): a single `useReducer` store in `AppProvider` holds `profile` and `watchlist` (movie ids), read with `useApp()`. Nothing is persisted, and resetting on refresh is a requirement, so don't add localStorage.
@@ -32,7 +42,7 @@ There is no test runner configured yet.
 - **Data** (`src/data/`): `movies.js` is static seed data. There are no images: `Poster` draws each poster from the movie's `hue`. `recommendations.js` builds the three Home rows from the profile's region and genres.
 - Each component has a sibling `.css` file. Design tokens are CSS variables in `src/index.css`.
 
-## Intended app (from `app_outline/`)
+## Intended app (from `front-end/app_outline/`)
 
 1. **Onboarding:** the user is asked for their age, genre preference and regional preference (e.g. Korean dramas vs. American dramas).
 2. **Home (`/home`):** horizontal rows/carousels of movie posters, with recommendations shown prominently. Clicking a movie opens the **movie description** popup. Home also links to the watchlist.
@@ -41,7 +51,7 @@ There is no test runner configured yet.
 
 The user stories call the description and watchlist views "popups" opened from Home, so plan for modal/overlay views on top of Home, not only separate routes. Onboarding answers and the watchlist are shared across all views, so they need app-level state.
 
-## Style constraints (`app_outline/style_guide.md`)
+## Style constraints (`front-end/app_outline/style_guide.md`)
 
 - Colors:
   - Backgrounds: `#141414` (primary), `#181818` (secondary).

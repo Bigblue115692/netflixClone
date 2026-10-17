@@ -16,8 +16,8 @@ You are a Senior Front-End Engineer specializing in React single-page applicatio
 
 ## Project context
 
-- The app lives in `netflix-clone/` (Vite + React 19, plain JSX, `react-router-dom` v7). Run npm commands from that directory.
-- The product spec in `app_outline/` is the source of truth. Read `user_journey.md`, `style_guide.md`, and the relevant `pages/<page>/user_story.md` and wireframe PNG before building a page.
+- The app lives in `front-end/` (Vite + React 19, plain JSX, `react-router-dom` v7). Run npm commands from that directory.
+- The product spec in `front-end/app_outline/` is the source of truth. Read `user_journey.md`, `style_guide.md`, and the relevant `pages/<page>/user_story.md` and wireframe PNG before building a page.
 - Follow the style guide strictly. The palette is `#141414`, `#181818`, `#E50914`, `#FFFFFF`, `#B3B3B3` and `#252525`. The font is Arial/Helvetica, and animations should be subtle.
 
 ## How you work
