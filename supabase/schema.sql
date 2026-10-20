@@ -11,7 +11,11 @@ create table public.users (
   id         uuid primary key references auth.users (id) on delete cascade,
   name       varchar(100),
   email      varchar unique,                -- diagram marks email as unique
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Onboarding answers. Empty until onboarding is done; the app treats a null region as unfinished.
+  age        smallint check (age between 1 and 120),
+  genres     text[],
+  region     text check (region in ('korean', 'american'))
 );
 
 -- Creates the profile when someone signs up.
@@ -36,10 +40,12 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- movies: shared catalogue with no owner.
+-- movies: shared catalogue with no owner. Rows come from seed.sql.
+-- slug matches the ids in front-end/src/data/movies.js, which holds the display details.
 create table public.movies (
   id    uuid primary key default gen_random_uuid(),
-  title varchar
+  title varchar,
+  slug  text not null unique
 );
 
 -- Watchlists: users 1 ── * watchlists, movies ── watchlists.
@@ -74,9 +80,9 @@ create policy "Users can update their own profile"
   using ((select auth.uid()) = id)
   with check ((select auth.uid()) = id);
 
--- Email comes from Auth, so users may only change their name.
+-- Email comes from Auth, so users may only change their name and onboarding answers.
 revoke update on public.users from authenticated;
-grant update (name) on public.users to authenticated;
+grant update (name, age, genres, region) on public.users to authenticated;
 
 -- movies: read-only catalogue for signed-in users.
 -- Add movies from the dashboard or SQL editor, which bypass RLS.

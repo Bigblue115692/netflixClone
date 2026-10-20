@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Poster from '../components/Poster.jsx'
-import { GENRES, MOVIES, REGIONS } from '../data/movies'
+import AuthShell from '../components/AuthShell.jsx'
+import { GENRES, REGIONS } from '../data/movies'
 import { useApp } from '../state/appContext'
 import './Onboarding.css'
-
-const WALL_ROWS = [MOVIES.slice(0, 12), MOVIES.slice(12, 24), MOVIES.slice(24)]
 
 function validate({ name, age, genres, region }) {
   const errors = {}
@@ -31,10 +29,12 @@ export default function Onboarding() {
   const { profile, completeOnboarding } = useApp()
   const navigate = useNavigate()
   const [name, setName] = useState(profile?.name ?? '')
-  const [age, setAge] = useState(profile ? String(profile.age) : '')
+  const [age, setAge] = useState(profile?.age ? String(profile.age) : '')
   const [genres, setGenres] = useState(profile?.genres ?? [])
   const [region, setRegion] = useState(profile?.region ?? '')
   const [errors, setErrors] = useState({})
+  const [saveError, setSaveError] = useState('')
+  const [saving, setSaving] = useState(false)
 
   function clearError(key) {
     setErrors((current) => {
@@ -51,7 +51,7 @@ export default function Onboarding() {
     )
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     const nextErrors = validate({ name, age, genres, region })
     setErrors(nextErrors)
@@ -60,27 +60,25 @@ export default function Onboarding() {
       document.getElementById(FIRST_FIELD[firstInvalid])?.focus()
       return
     }
-    completeOnboarding({ name: name.trim(), age: Number(age), genres, region })
-    navigate('/home')
+    setSaving(true)
+    setSaveError('')
+    try {
+      await completeOnboarding({ name: name.trim(), age: Number(age), genres, region })
+      navigate('/home')
+    } catch {
+      setSaveError('We couldn’t save your profile. Check your connection and try again.')
+      setSaving(false)
+    }
   }
 
   return (
-    <main className="onboarding">
-      <div className="onboarding__wall" aria-hidden="true">
-        {WALL_ROWS.map((row, i) => (
-          <div key={i} className="onboarding__wall-row">
-            {[...row, ...row].map((movie, j) => (
-              <Poster key={`${movie.id}-${j}`} movie={movie} className="onboarding__wall-poster" />
-            ))}
-          </div>
-        ))}
-      </div>
-
-      <p className="onboarding__logo">NETFLIX</p>
-
-      <form className="onboarding__panel" onSubmit={handleSubmit} noValidate>
+    <AuthShell>
+      <form className="auth-shell__panel" onSubmit={handleSubmit} noValidate>
         <h1>Set up your profile</h1>
-        <p className="onboarding__intro">Tell us a little about you and we’ll fill your home screen.</p>
+        <p className="auth-shell__intro">Tell us a little about you and we’ll fill your home screen.</p>
+        <p className="auth-shell__alert" role="alert">
+          {saveError}
+        </p>
 
         <div className="field">
           <label htmlFor="name">Name</label>
@@ -162,10 +160,10 @@ export default function Onboarding() {
           {errors.region && <p id="region-error" className="field__error">{errors.region}</p>}
         </fieldset>
 
-        <button type="submit" className="button button--primary onboarding__submit">
-          Start watching
+        <button type="submit" className="button button--primary auth-shell__submit" disabled={saving}>
+          {saving ? 'Saving…' : 'Start watching'}
         </button>
       </form>
-    </main>
+    </AuthShell>
   )
 }

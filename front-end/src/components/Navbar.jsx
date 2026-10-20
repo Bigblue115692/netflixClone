@@ -4,7 +4,7 @@ import { useApp } from '../state/appContext'
 import './Navbar.css'
 
 export default function Navbar() {
-  const { profile, watchlist } = useApp()
+  const { user, profile, watchlist, signOut } = useApp()
   const { pathname } = useLocation()
   const [scrolled, setScrolled] = useState(false)
   const onWatchlist = pathname.startsWith('/home/watchlist')
@@ -43,13 +43,20 @@ export default function Navbar() {
         </ul>
       </nav>
       {profile && (
-        <span className="navbar__profile" title={profile.name}>
+        <span className="navbar__profile" title={`Signed in as ${user.email}`}>
           <span className="navbar__avatar" aria-hidden="true">
             {profile.name.charAt(0).toUpperCase()}
           </span>
           <span className="navbar__name">{profile.name}</span>
         </span>
       )}
+      {/* RequireAuth sends the signed-out user back to the sign-in screen. */}
+      <button type="button" className="button button--ghost navbar__signout" onClick={signOut}>
+        <svg className="navbar__signout-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="navbar__signout-label">Sign out</span>
+      </button>
     </header>
   )
 }

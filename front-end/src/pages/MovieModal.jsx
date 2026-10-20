@@ -20,14 +20,24 @@ export default function MovieModal() {
   const saved = isInWatchlist(movie.id)
   const region = REGIONS.find((r) => r.id === movie.region).singular
 
-  function handleAdd() {
-    addToWatchlist(movie.id)
+  async function handleAdd() {
+    try {
+      await addToWatchlist(movie.id)
+    } catch {
+      setStatus(`We couldn’t add ${movie.title}. Try again.`)
+      return
+    }
     // Replace, so closing the watchlist goes back to wherever the description was opened from.
     navigate('/home/watchlist', { replace: true, state: { inApp: true, added: movie.id } })
   }
 
-  function handleRemove() {
-    removeFromWatchlist(movie.id)
+  async function handleRemove() {
+    try {
+      await removeFromWatchlist(movie.id)
+    } catch {
+      setStatus(`We couldn’t remove ${movie.title}. Try again.`)
+      return
+    }
     setStatus(`Removed ${movie.title} from your watchlist.`)
   }
 

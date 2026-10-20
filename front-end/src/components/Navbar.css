@@ -93,8 +93,74 @@
   max-width: 16ch;
 }
 
+.navbar__signout {
+  flex: none;
+  min-height: 36px;
+}
+
+.navbar__signout-icon {
+  display: none;
+}
+
 @media (max-width: 600px) {
+  .navbar {
+    gap: 12px;
+  }
+
   .navbar__name {
     display: none;
+  }
+
+  .navbar__signout {
+    padding: 0 10px;
+    font-size: 13px;
+  }
+}
+
+/* Small phones: the avatar gives way so Sign out keeps its room. */
+@media (max-width: 400px) {
+  .navbar__profile {
+    display: none;
+  }
+
+  .navbar__signout {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .navbar {
+    gap: 10px;
+  }
+
+  .navbar__logo {
+    font-size: 18px;
+  }
+
+  .navbar__links {
+    gap: 10px;
+  }
+
+  .navbar__links a {
+    font-size: 14px;
+  }
+
+  /* Icon only; the label stays for screen readers. */
+  .navbar__signout {
+    width: 36px;
+    padding: 0;
+  }
+
+  .navbar__signout-icon {
+    display: block;
+  }
+
+  .navbar__signout-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

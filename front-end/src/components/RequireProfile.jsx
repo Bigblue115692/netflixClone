@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useApp } from '../state/appContext'
 
-// Guards every page after onboarding. Data lives in memory, so a refresh lands back on "/".
+// Guards Home until onboarding is done. The sign-up trigger leaves region empty until then.
 export default function RequireProfile() {
   const { profile } = useApp()
-  if (!profile) return <Navigate to="/" replace />
+  if (!profile?.region) return <Navigate to="/onboarding" replace />
   return <Outlet />
 }

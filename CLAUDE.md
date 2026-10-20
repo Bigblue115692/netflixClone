@@ -12,15 +12,17 @@ The repo root holds two halves plus shared Claude config:
     - `style_guide.md`: colors, typography and interaction rules.
     - `pages/<page>/`: one folder per page, each with a `user_story.md` and a wireframe PNG (`home`, `movie_description`, `personal_watch_list`).
   - `src/`, `public/`, `index.html`, `package.json`, `vite.config.js`, `.oxlintrc.json`: the app itself.
-- `supabase/`: the database design for the planned back end.
-  - `schema.sql`: the schema.
+- `supabase/`: the Supabase back end (project `ekekvwkjzqpvvrlmxvip`).
+  - `schema.sql`: the schema as applied: tables, sign-up trigger, RLS policies.
+  - `seed.sql`: the movie catalogue rows.
+  - `backups/`: CSV exports from before auth.
   - `erd.png`: the entity-relationship diagram.
   - `user_stories.md`: database user stories.
   - `api_notes.md`: API notes (currently empty).
 - `.claude/`: shared `skills/` (supabase, supabase-postgres-best-practices, postgresql-table-design) and `agents/` (front-end-agent).
 - `.mcp.json`: Supabase MCP server config.
 
-Run all npm commands from `front-end/`, not from the repo root. The front end does not use Supabase yet.
+Run all npm commands from `front-end/`, not from the repo root. The front end reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` from `front-end/.env` (git-ignored).
 
 ## Commands (run in `front-end/`)
 
@@ -36,14 +38,16 @@ There is no test runner configured yet.
 
 ## Front-end architecture (paths relative to `front-end/`)
 
-- **Routing** (`src/App.jsx`, React Router v7 declarative mode via `react-router-dom`): `/` is onboarding. `RequireProfile` guards `/home` and redirects to `/` until a profile exists. `/home/movie/:id` and `/home/watchlist` are child routes of Home: they render through Home's `<Outlet />` as modals, so Home stays mounted behind them.
-- **State** (`src/state/`): a single `useReducer` store in `AppProvider` holds `profile` and `watchlist` (movie ids), read with `useApp()`. Nothing is persisted, and resetting on refresh is a requirement, so don't add localStorage.
+- **Routing** (`src/App.jsx`, React Router v7 declarative mode via `react-router-dom`): `/` is sign-in and `/signup` is registration; `PublicOnly` sends signed-in users on. `RequireAuth` guards `/onboarding` and `/home`, and `RequireProfile` keeps `/home` behind onboarding (a profile with no `region`). All three show `LoadingScreen` while a stored session is being confirmed. `/home/movie/:id` and `/home/watchlist` are child routes of Home: they render through Home's `<Outlet />` as modals, so Home stays mounted behind them.
+- **Auth and state** (`src/state/`, `src/lib/`): a single `useReducer` store in `AppProvider` holds `status` (`loading` / `signedIn` / `signedOut`), `user`, `profile` and `watchlist` (movie slugs), read with `useApp()`. It mirrors Supabase: every change is written through `lib/db.js` first. `lib/supabase.js` is the one client; supabase-js keeps the session in localStorage, and on load `AppProvider` confirms it with `supabase.auth.getUser()` before restoring the profile and watchlist. Don't store app data in localStorage yourself.
+- **Database access** (`src/lib/db.js`): RLS scopes every query to the signed-in user, so queries never filter by user and inserts never send `user_id` (it defaults to `auth.uid()`). The app uses movie slugs; `db.js` maps them to database uuids.
 - **Modals** (`components/Modal.jsx`): built on native `<dialog>` + `showModal()`. Focus returns to the element that opened the first modal in a chain. Links that open modals pass `state={{ inApp: true }}`, and `useCloseModal` closes with `navigate(-1)` in that case (so Back and the close button match), otherwise with `navigate('/home')`. Add-to-watchlist *replaces* the description entry with `/home/watchlist`.
-- **Data** (`src/data/`): `movies.js` is static seed data. There are no images: `Poster` draws each poster from the movie's `hue`. `recommendations.js` builds the three Home rows from the profile's region and genres.
+- **Data** (`src/data/`): `movies.js` holds the movie details; its ids are the `movies.slug` values in the database (keep `supabase/seed.sql` in step). There are no images: `Poster` draws each poster from the movie's `hue`. `recommendations.js` builds the three Home rows from the profile's region and genres.
 - Each component has a sibling `.css` file. Design tokens are CSS variables in `src/index.css`.
 
 ## Intended app (from `front-end/app_outline/`)
 
+0. **Account:** the user registers with name, email and password, or signs in. Email confirmation is off in the Supabase project, so sign-up signs the user straight in.
 1. **Onboarding:** the user is asked for their age, genre preference and regional preference (e.g. Korean dramas vs. American dramas).
 2. **Home (`/home`):** horizontal rows/carousels of movie posters, with recommendations shown prominently. Clicking a movie opens the **movie description** popup. Home also links to the watchlist.
 3. **Movie description:** a large poster or backdrop, the title and description, and a prominent add/remove-watchlist button. Adding a movie leads to the watchlist popup.

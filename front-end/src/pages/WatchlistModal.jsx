@@ -18,8 +18,13 @@ export default function WatchlistModal() {
   const [status, setStatus] = useState(added ? `Added ${added.title} to your watchlist.` : '')
   const movies = watchlist.map(getMovie)
 
-  function handleRemove(movie) {
-    removeFromWatchlist(movie.id)
+  async function handleRemove(movie) {
+    try {
+      await removeFromWatchlist(movie.id)
+    } catch {
+      setStatus(`We couldn’t remove ${movie.title}. Try again.`)
+      return
+    }
     setStatus(`Removed ${movie.title} from your watchlist.`)
     // The focused Remove button is about to disappear; keep focus inside the dialog.
     headingRef.current.focus()
